@@ -11,7 +11,7 @@ export { Button, Input, type ButtonProps, type InputProps } from './input'
 export { For, If, Show } from './control'
 
 //Media
-export { Divider, Spacer } from './media'
+export { Divider, Spacer, Image, Video, Audio } from './media'
 
 //Feedback
 export { Spinner, Progress, Badge, toast } from './feedback'

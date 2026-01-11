@@ -1,0 +1,26 @@
+{
+    "name": "create-aram",
+    "version": "0.1.0",
+    "description": "Create a new Aram app",
+    "type": "module",
+    "bin": {
+        "create-aram": "./index.js"
+    },
+    "files": [
+        "index.js",
+        "template"
+    ],
+    "keywords": [
+        "aram",
+        "ui",
+        "create",
+        "scaffold",
+        "cli"
+    ],
+    "author": "Aruvili Team",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Aruvili/Aram"
+    }
+}
