@@ -1,3 +1,5 @@
+import { registerCleanup } from './lifecycle'
+
 export type Subscriber = () => void
 
 export interface State<T> {
@@ -34,9 +36,11 @@ export function state<T>(initial: T): State<T> {
         $: () => {
             const span = document.createElement('span')
             span.textContent = String(value)
-            subscribers.add(() => {
+            const update = () => {
                 span.textContent = String(value)
-            })
+            }
+            subscribers.add(update)
+            registerCleanup(span, () => subscribers.delete(update))
             return span
         }
     }
@@ -69,6 +73,35 @@ export function effect(fn: Subscriber): () => void {
     return () => { }
 }
 
+export function createEffect(fn: () => void | (() => void)): () => void {
+    let cleanup: (() => void) | void = undefined
+    let disposed = false
+    const trackedStates = new Set<State<unknown>>()
+
+    const run = () => {
+        if (disposed) return
+
+        if (cleanup) {
+            cleanup()
+            cleanup = undefined
+        }
+
+        currentEffect = run
+        cleanup = fn()
+        currentEffect = null
+    }
+
+    run()
+
+    return () => {
+        disposed = true
+        if (cleanup) {
+            cleanup()
+            cleanup = undefined
+        }
+    }
+}
+
 export function watch<T>(s: State<T>, render: (value: T) => HTMLElement): HTMLElement {
     const container = document.createElement('span')
     container.style.display = 'contents'
@@ -87,7 +120,8 @@ export function watch<T>(s: State<T>, render: (value: T) => HTMLElement): HTMLEl
     }
 
     update()
-    s.subscribe(update)
+    const unsub = s.subscribe(update)
+    registerCleanup(container, unsub)
 
     return container
 }
