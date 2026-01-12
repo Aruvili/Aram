@@ -1,38 +1,104 @@
-name: CI
+name: CI Pipeline
 
 on:
   push:
-    branches: [master, main]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [master, main]
+    branches: [ main, master, develop ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  test:
+    name: Test on Node ${{ matrix.node-version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
-
+        node-version: [18, 20]
+        os: [ubuntu-latest, windows-latest]
+    
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: package/package-lock.json
-
+          
       - name: Install dependencies
         working-directory: ./package
-        run: npm ci
-
-      - name: Build
+        run: npm install
+        
+      - name: Build framework
         working-directory: ./package
         run: npm run build
-
+        
       - name: Type Check
         working-directory: ./package
         run: npx tsc --noEmit
+        
+      - name: Check bundle size
+        if: runner.os != 'Windows'
+        run: |
+          echo "## Bundle Size Report 📦" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          if [ -f "package/dist/index.js" ]; then
+            SIZE=$(du -h package/dist/index.js | cut -f1)
+            echo "| index.js | $SIZE |" >> $GITHUB_STEP_SUMMARY
+          fi
+          TOTAL=$(du -sh package/dist | cut -f1)
+          echo "| **Total dist/** | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+        shell: bash
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: |
+            package/dist/
+          retention-days: 7
+
+  quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        working-directory: ./package
+        run: npm install
+        
+      - name: Build framework
+        working-directory: ./package
+        run: npm run build
+        
+      - name: Analyze TypeScript
+        run: |
+          echo "## Aram Analysis Report �" >> $GITHUB_STEP_SUMMARY
+          echo "### File Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          
+          # Count TypeScript files
+          TS_COUNT=$(find package/src -name "*.ts" | wc -l)
+          echo "| TypeScript Files | $TS_COUNT |" >> $GITHUB_STEP_SUMMARY
+          
+          # Count exported functions
+          EXPORT_COUNT=$(grep -r "export function" package/src --include="*.ts" | wc -l)
+          echo "| Exported Functions | $EXPORT_COUNT |" >> $GITHUB_STEP_SUMMARY
+          
+          # Count widgets
+          WIDGET_COUNT=$(find package/src/widgets -name "*.ts" | wc -l)
+          echo "| Widget Files | $WIDGET_COUNT |" >> $GITHUB_STEP_SUMMARY
+          
+          # Dist sizes
+          if [ -f "package/dist/index.js" ]; then
+            JS_SIZE=$(stat -c%s package/dist/index.js 2>/dev/null || stat -f%z package/dist/index.js)
+            echo "| Bundle Size | ${JS_SIZE} bytes |" >> $GITHUB_STEP_SUMMARY
+          fi
