@@ -4,7 +4,6 @@ export interface State<T> {
     get: () => T
     set: (value: T | ((prev: T) => T)) => void
     subscribe: (fn: Subscriber) => () => void
-
     $: () => HTMLElement
 }
 
@@ -45,6 +44,21 @@ export function state<T>(initial: T): State<T> {
     return s
 }
 
+export function computed<T>(fn: () => T): State<T> {
+    const s = state<T>(undefined as T)
+
+    effect(() => {
+        s.set(fn())
+    })
+
+    return {
+        get: s.get,
+        set: () => { throw new Error('Cannot set a computed state') },
+        subscribe: s.subscribe,
+        $: s.$
+    }
+}
+
 export function effect(fn: Subscriber): () => void {
     const run = () => {
         currentEffect = run
@@ -55,18 +69,54 @@ export function effect(fn: Subscriber): () => void {
     return () => { }
 }
 
-
 export function watch<T>(s: State<T>, render: (value: T) => HTMLElement): HTMLElement {
     const container = document.createElement('span')
     container.style.display = 'contents'
 
+    let currentNode: Node | null = null
+
     const update = () => {
-        container.innerHTML = ''
-        container.appendChild(render(s.get()))
+        const newNode = render(s.get())
+
+        if (currentNode) {
+            container.replaceChild(newNode, currentNode)
+        } else {
+            container.appendChild(newNode)
+        }
+        currentNode = newNode
     }
 
     update()
     s.subscribe(update)
 
     return container
+}
+
+let batchDepth = 0
+let pendingUpdates: Set<Subscriber> = new Set()
+
+export function batch(fn: () => void): void {
+    batchDepth++
+    try {
+        fn()
+    } finally {
+        batchDepth--
+        if (batchDepth === 0) {
+            const updates = pendingUpdates
+            pendingUpdates = new Set()
+            updates.forEach(update => update())
+        }
+    }
+}
+
+export function isBatching(): boolean {
+    return batchDepth > 0
+}
+
+export function scheduleUpdate(fn: Subscriber): void {
+    if (batchDepth > 0) {
+        pendingUpdates.add(fn)
+    } else {
+        fn()
+    }
 }

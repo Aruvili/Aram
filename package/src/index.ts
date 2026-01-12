@@ -1,7 +1,7 @@
 import { createElement, type AramNode } from './render'
 
 //Core
-export { state, effect, watch, type State, type Subscriber } from './state'
+export { state, computed, effect, watch, batch, type State, type Subscriber } from './state'
 export { createElement, mount, type AramNode } from './render'
 
 //Widgets
