@@ -37,5 +37,5 @@ export function Link(props: TextProps & { href: string }, ...children: (string |
         textDecoration: 'underline',
         cursor: 'pointer'
     }
-    return createElement('a', { href: props.href, target: '_blank', style }, ...children)
+    return createElement('a', { href: props.href, target: '_blank', rel: 'noopener noreferrer', style }, ...children)
 }

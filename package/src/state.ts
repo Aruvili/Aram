@@ -76,7 +76,6 @@ export function effect(fn: Subscriber): () => void {
 export function createEffect(fn: () => void | (() => void)): () => void {
     let cleanup: (() => void) | void = undefined
     let disposed = false
-    const trackedStates = new Set<State<unknown>>()
 
     const run = () => {
         if (disposed) return

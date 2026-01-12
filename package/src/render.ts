@@ -12,8 +12,17 @@ export function createElement(
             Object.assign(el.style, value)
         } else if (key.startsWith('on') && typeof value === 'function') {
             el.addEventListener(key.slice(2).toLowerCase(), value as EventListener)
+        } else if (key.startsWith('on') && typeof value === 'string') {
+            continue
         } else if (value !== undefined && value !== null) {
-            el.setAttribute(key, String(value))
+            const strValue = String(value)
+            const lowerValue = strValue.toLowerCase().trim()
+            if (key === 'href' || key === 'src' || key === 'action' || key === 'formaction' || key === 'xlink:href') {
+                if (lowerValue.startsWith('javascript:') || lowerValue.startsWith('data:text/html')) {
+                    continue
+                }
+            }
+            el.setAttribute(key, strValue)
         }
     }
 

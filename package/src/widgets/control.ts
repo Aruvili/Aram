@@ -1,5 +1,6 @@
 import type { AramNode } from '../render'
 import type { State } from '../state'
+import { registerCleanup } from '../lifecycle'
 
 export function For<T>(
     items: T[] | State<T[]>,
@@ -40,7 +41,8 @@ export function For<T>(
     }
 
     update()
-    items.subscribe(update)
+    const unsub = items.subscribe(update)
+    registerCleanup(container, unsub)
 
     return container
 }
@@ -70,7 +72,8 @@ export function If(
     }
 
     update()
-    condition.subscribe(update)
+    const unsub = condition.subscribe(update)
+    registerCleanup(container, unsub)
 
     return container
 }
@@ -105,7 +108,8 @@ export function Show(
     }
 
     update()
-    when.subscribe(update)
+    const unsub = when.subscribe(update)
+    registerCleanup(container, unsub)
 
     return container
 }
