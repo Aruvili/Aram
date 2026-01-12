@@ -9,7 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "aram": "^0.1.0"
+        "@aruvili/aram": "^0.1.0"
     },
     "devDependencies": {
         "typescript": "^5.3.0",

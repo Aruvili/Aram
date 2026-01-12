@@ -6,6 +6,7 @@ on:
 
 jobs:
   publish-aram:
+    name: Publish @aruvili/aram
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,8 +21,7 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-          cache-dependency-path: package/package-lock.json
+          scope: '@aruvili'
 
       - name: Install dependencies
         working-directory: ./package
@@ -31,13 +31,14 @@ jobs:
         working-directory: ./package
         run: npm run build
 
-      - name: Publish aram package
+      - name: Publish @aruvili/aram
         working-directory: ./package
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-create-aram:
+    name: Publish @aruvili/create-aram
     runs-on: ubuntu-latest
     needs: publish-aram
     permissions:
@@ -53,8 +54,9 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
+          scope: '@aruvili'
 
-      - name: Publish create-aram package
+      - name: Publish @aruvili/create-aram
         working-directory: ./create-aram
         run: npm publish --provenance --access public
         env:

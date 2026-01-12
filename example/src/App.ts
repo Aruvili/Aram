@@ -55,7 +55,6 @@ export function App() {
                         )
                     ),
 
-
                     Center({},
                         Text({ size: 14, color: 'rgba(255,255,255,0.4)', align: 'center' },
                             '© 2025 Aruvili'

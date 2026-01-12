@@ -1,4 +1,4 @@
-import {state, AramApp, Box, Row, Column, Center, Title, Text, Button, Image} from 'aram'
+import { state, AramApp, Box, Row, Column, Center, Title, Text, Button, Image } from '@aruvili/aram'
 
 export function App() {
     const count = state(0)
@@ -14,7 +14,7 @@ export function App() {
             },
                 Column({ gap: 32, align: 'center' },
                     Center({},
-                        Image({src: '/assets/aruvili.svg', size: 100})
+                        Image({ src: '/assets/aruvili.svg', size: 100 })
                     ),
 
                     Center({},

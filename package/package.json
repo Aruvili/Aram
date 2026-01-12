@@ -1,18 +1,27 @@
 {
-    "name": "aram",
+    "name": "@aruvili/aram",
     "version": "0.1.0",
-    "description": "Aram the web",
+    "description": "A UI framework for the Web with Flutter-style widgets and fine-grained reactivity",
     "author": "Aruvili Team",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/Aruvili/Aram"
     },
+    "homepage": "https://github.com/Aruvili/Aram#readme",
+    "bugs": {
+        "url": "https://github.com/Aruvili/Aram/issues"
+    },
     "keywords": [
         "ui",
         "framework",
         "web",
-        "aram"
+        "aram",
+        "reactive",
+        "signals",
+        "widgets",
+        "typescript",
+        "frontend"
     ],
     "type": "module",
     "main": "./dist/index.js",
