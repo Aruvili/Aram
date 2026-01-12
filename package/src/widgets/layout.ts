@@ -31,12 +31,23 @@ export function Box(props: BoxProps = {}, ...children: (AramNode | string)[]): H
 }
 
 export function Row(props: BoxProps = {}, ...children: (AramNode | string)[]): HTMLElement {
-    const style = { ...propsToStyle(props), display: 'flex', flexDirection: 'row' }
+    const style: Record<string, string> = {
+        ...propsToStyle(props),
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    }
     return createElement('div', { style }, ...children)
 }
 
 export function Column(props: BoxProps = {}, ...children: (AramNode | string)[]): HTMLElement {
-    const style = { ...propsToStyle(props), display: 'flex', flexDirection: 'column' }
+    const style: Record<string, string> = {
+        ...propsToStyle(props),
+        display: 'flex',
+        flexDirection: 'column'
+    }
+    if (props.align === 'center') style.alignItems = 'center'
+    if (props.align === 'right') style.alignItems = 'flex-end'
     return createElement('div', { style }, ...children)
 }
 

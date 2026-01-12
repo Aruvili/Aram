@@ -10,7 +10,7 @@ export function Spinner(props: { size?: number; color?: string } = {}): HTMLElem
         borderRadius: '50%',
         animation: 'aram-spin 1s linear infinite'
     }
-    // Add keyframes if not exists
+
     if (!document.getElementById('aram-spinner-style')) {
         const styleEl = document.createElement('style')
         styleEl.id = 'aram-spinner-style'

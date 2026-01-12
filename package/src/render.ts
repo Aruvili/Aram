@@ -7,7 +7,6 @@ export function createElement(
 ): HTMLElement {
     const el = document.createElement(tag)
 
-    // Apply props
     for (const [key, value] of Object.entries(props)) {
         if (key === 'style' && typeof value === 'object') {
             Object.assign(el.style, value)
@@ -18,7 +17,6 @@ export function createElement(
         }
     }
 
-    // Append children
     for (const child of children.flat()) {
         if (child == null) continue
         if (typeof child === 'string' || typeof child === 'number') {

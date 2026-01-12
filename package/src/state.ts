@@ -24,7 +24,7 @@ export function state<T>(initial: T): State<T> {
                 : next
             if (newValue !== value) {
                 value = newValue
-                subscribers.forEach(fn => fn())
+                subscribers.forEach(fn => scheduleUpdate(fn))
             }
         },
         subscribe: (fn) => {
