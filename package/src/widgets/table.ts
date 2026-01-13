@@ -1,7 +1,7 @@
-import { createElement } from '../render'
+import { createElement } from '../core/render'
 import { getTheme } from './theme'
-import { state } from '../state'
-import { registerCleanup } from '../lifecycle'
+import { state } from '../core/state'
+import { registerCleanup } from '../core/lifecycle'
 
 export interface TableColumn<T> {
     key: keyof T | string

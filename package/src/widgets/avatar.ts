@@ -1,4 +1,4 @@
-import { createElement } from '../render'
+import { createElement } from '../core/render'
 import { getTheme } from './theme'
 
 export interface AvatarProps {
@@ -28,7 +28,7 @@ export function Avatar(props: AvatarProps = {}): HTMLElement {
             alt: props.name || '',
             style: { width: '100%', height: '100%', borderRadius: radius, objectFit: 'cover' }
         })
-        
+
         img.addEventListener('error', () => {
             const initials = (props.name || '?').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
             wrapper.innerHTML = ''

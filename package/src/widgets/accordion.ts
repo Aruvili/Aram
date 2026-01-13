@@ -1,7 +1,7 @@
-import { createElement } from '../render'
-import { state } from '../state'
+import { createElement } from '../core/render'
+import { state } from '../core/state'
 import { getTheme } from './theme'
-import { registerCleanup } from '../lifecycle'
+import { registerCleanup } from '../core/lifecycle'
 
 let accordionStyleInjected = false
 

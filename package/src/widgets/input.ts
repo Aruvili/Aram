@@ -1,6 +1,6 @@
-import { createElement, type AramNode } from '../render'
-import { registerCleanup } from '../lifecycle'
-import { type State, isState } from '../state'
+import { createElement, type AramNode } from '../core/render'
+import { registerCleanup } from '../core/lifecycle'
+import { type State, isState } from '../core/state'
 
 export interface ButtonProps {
     pad?: number | string

@@ -1,5 +1,5 @@
-import { createElement } from '../render'
-import { state, watch } from '../state'
+import { createElement } from '../core/render'
+import { state, watch } from '../core/state'
 import { getTheme } from './theme'
 
 export interface TabsProps {

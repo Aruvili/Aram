@@ -1,4 +1,4 @@
-import { createElement } from '../render'
+import { createElement } from '../core/render'
 import { getTheme } from './theme'
 
 export interface AlertProps {

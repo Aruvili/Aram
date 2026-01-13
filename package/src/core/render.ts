@@ -1,4 +1,4 @@
-import { isURLSafe, isCSSValueSafe, sanitizeHTML as secureSanitize, logSecurityEvent } from './security'
+import { isURLSafe, isCSSValueSafe, sanitizeHTML as secureSanitize, logSecurityEvent } from '../security'
 
 export type AramNode = HTMLElement | Text | AramNode[] | null
 

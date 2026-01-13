@@ -1,4 +1,4 @@
-import { createElement } from '../render'
+import { createElement } from '../core/render'
 
 export interface SpacerProps {
     size?: number

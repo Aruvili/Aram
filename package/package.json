@@ -1,6 +1,6 @@
 {
     "name": "@aruvili/aram",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "A UI framework for the Web with Flutter-style widgets and fine-grained reactivity",
     "author": "Aruvili Team",
     "license": "MIT",

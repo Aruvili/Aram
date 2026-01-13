@@ -1,6 +1,6 @@
-import { createElement } from '../render'
+import { createElement } from '../core/render'
 import { getTheme } from './theme'
-import { registerCleanup } from '../lifecycle'
+import { registerCleanup } from '../core/lifecycle'
 
 let modalStyleInjected = false
 

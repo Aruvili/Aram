@@ -1,6 +1,6 @@
-import { createElement, type AramNode } from './render'
-import { state, type State } from './state'
-import { registerCleanup } from './lifecycle'
+import { createElement, type AramNode } from '../core/render'
+import { state, type State } from '../core/state'
+import { registerCleanup } from '../core/lifecycle'
 
 export interface RouterContext {
     path: string

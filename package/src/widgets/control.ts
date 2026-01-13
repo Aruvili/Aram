@@ -1,6 +1,6 @@
-import type { AramNode } from '../render'
-import type { State } from '../state'
-import { registerCleanup } from '../lifecycle'
+import type { AramNode } from '../core/render'
+import type { State } from '../core/state'
+import { registerCleanup } from '../core/lifecycle'
 
 export function For<T>(
     items: T[] | State<T[]>,

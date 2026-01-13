@@ -1,4 +1,4 @@
-import type { ThemeColors } from './widgets/theme'
+import type { ThemeColors } from '../widgets/theme'
 
 export const BADGE_SIZES = {
     sm: { padding: '2px 6px', fontSize: '10px' },

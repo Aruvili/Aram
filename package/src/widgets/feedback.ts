@@ -1,5 +1,5 @@
-import { createElement, type AramNode } from '../render'
-import { BADGE_SIZES } from '../constants'
+import { createElement, type AramNode } from '../core/render'
+import { BADGE_SIZES } from '../utils/constants'
 
 let spinnerStyleInjected = false
 let progressStyleInjected = false

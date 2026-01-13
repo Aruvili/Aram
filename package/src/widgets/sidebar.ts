@@ -1,7 +1,7 @@
-import { createElement } from '../render'
-import { state, type State } from '../state'
+import { createElement } from '../core/render'
+import { state, type State } from '../core/state'
 import { getTheme } from './theme'
-import { registerCleanup } from '../lifecycle'
+import { registerCleanup } from '../core/lifecycle'
 
 export interface SidebarSection {
     label?: string

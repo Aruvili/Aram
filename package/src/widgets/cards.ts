@@ -1,4 +1,4 @@
-import { createElement, type AramNode } from '../render'
+import { createElement, type AramNode } from '../core/render'
 import { getTheme } from './theme'
 
 export interface CardProps {
