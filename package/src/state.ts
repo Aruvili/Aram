@@ -9,6 +9,10 @@ export interface State<T> {
     $: () => HTMLElement
 }
 
+export function isState<T>(val: unknown): val is State<T> {
+    return val !== null && typeof val === 'object' && 'subscribe' in val && 'get' in val
+}
+
 let currentEffect: Subscriber | null = null
 
 export function state<T>(initial: T): State<T> {
@@ -24,6 +28,14 @@ export function state<T>(initial: T): State<T> {
             const newValue = typeof next === 'function'
                 ? (next as (prev: T) => T)(value)
                 : next
+            if (newValue !== null && typeof newValue === 'object') {
+                const obj = newValue as Record<string, unknown>
+                if (Object.prototype.hasOwnProperty.call(obj, '__proto__') ||
+                    Object.prototype.hasOwnProperty.call(obj, 'prototype')) {
+                    console.warn('[Aram] Blocked prototype pollution attempt')
+                    return
+                }
+            }
             if (newValue !== value) {
                 value = newValue
                 subscribers.forEach(fn => scheduleUpdate(fn))
@@ -66,7 +78,11 @@ export function computed<T>(fn: () => T): State<T> {
 export function effect(fn: Subscriber): () => void {
     const run = () => {
         currentEffect = run
-        fn()
+        try {
+            fn()
+        } catch (err) {
+            console.error('[Aram] Effect error:', err)
+        }
         currentEffect = null
     }
     run()
@@ -86,7 +102,11 @@ export function createEffect(fn: () => void | (() => void)): () => void {
         }
 
         currentEffect = run
-        cleanup = fn()
+        try {
+            cleanup = fn()
+        } catch (err) {
+            console.error('[Aram] Effect error:', err)
+        }
         currentEffect = null
     }
 
@@ -152,4 +172,33 @@ export function scheduleUpdate(fn: Subscriber): void {
     } else {
         fn()
     }
+}
+
+const MAX_UPDATES_PER_FRAME = 100
+let updateCount = 0
+let frameId: number | null = null
+
+function resetUpdateCount() {
+    updateCount = 0
+    frameId = null
+}
+
+export function safeScheduleUpdate(fn: Subscriber): void {
+    updateCount++
+    if (updateCount > MAX_UPDATES_PER_FRAME) {
+        if (__DEV__) {
+            console.warn('[Aram] Possible infinite loop detected. Update limit reached.')
+        }
+        return
+    }
+    if (!frameId) {
+        frameId = requestAnimationFrame(resetUpdateCount)
+    }
+    scheduleUpdate(fn)
+}
+
+export let __DEV__ = true
+
+export function setDevMode(isDev: boolean): void {
+    __DEV__ = isDev
 }

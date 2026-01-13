@@ -1,3 +1,5 @@
+import { isURLSafe, isCSSValueSafe, sanitizeHTML as secureSanitize, logSecurityEvent } from './security'
+
 export type AramNode = HTMLElement | Text | AramNode[] | null
 
 export function createElement(
@@ -9,19 +11,29 @@ export function createElement(
 
     for (const [key, value] of Object.entries(props)) {
         if (key === 'style' && typeof value === 'object') {
-            Object.assign(el.style, value)
+            const styleObj = value as Record<string, string>
+            for (const [prop, val] of Object.entries(styleObj)) {
+                if (val && isCSSValueSafe(String(val))) {
+                    (el.style as unknown as Record<string, string>)[prop] = val
+                } else if (val) {
+                    logSecurityEvent(`Blocked dangerous CSS: ${prop}=${val}`)
+                }
+            }
         } else if (key.startsWith('on') && typeof value === 'function') {
             el.addEventListener(key.slice(2).toLowerCase(), value as EventListener)
         } else if (key.startsWith('on') && typeof value === 'string') {
+            logSecurityEvent(`Blocked string event handler: ${key}`)
             continue
         } else if (value !== undefined && value !== null) {
             const strValue = String(value)
-            const lowerValue = strValue.toLowerCase().trim()
-            if (key === 'href' || key === 'src' || key === 'action' || key === 'formaction' || key === 'xlink:href') {
-                if (lowerValue.startsWith('javascript:') || lowerValue.startsWith('data:text/html')) {
+
+            if (key === 'href' || key === 'src' || key === 'action' || key === 'formaction' || key === 'xlink:href' || key === 'data' || key === 'poster') {
+                if (!isURLSafe(strValue)) {
+                    logSecurityEvent(`Blocked dangerous URL: ${key}=${strValue}`)
                     continue
                 }
             }
+
             el.setAttribute(key, strValue)
         }
     }
@@ -44,4 +56,18 @@ export function mount(node: AramNode, root: string | HTMLElement): void {
         : root
     if (!container) throw new Error(`Mount target not found: ${root}`)
     if (node) container.appendChild(node as Node)
+}
+
+export function dangerouslySetHTML(html: string): HTMLElement {
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = secureSanitize(html)
+    logSecurityEvent('dangerouslySetHTML called - content sanitized')
+    return wrapper
+}
+
+export function unsafeSetHTML(html: string): HTMLElement {
+    logSecurityEvent('WARNING: unsafeSetHTML called - no sanitization')
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = html
+    return wrapper
 }

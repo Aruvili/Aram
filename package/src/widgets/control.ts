@@ -19,25 +19,19 @@ export function For<T>(
 
     const update = () => {
         const currentItems = items.get()
-        const newKeys = new Set<string | number>()
 
+        while (container.firstChild) {
+            container.removeChild(container.firstChild)
+        }
+        nodeMap.clear()
+
+    
         currentItems.forEach((item, index) => {
             const key = getKey ? getKey(item, index) : index
-            newKeys.add(key)
-
-            if (!nodeMap.has(key)) {
-                const node = render(item, index) as Node
-                nodeMap.set(key, node)
-                container.appendChild(node)
-            }
+            const node = render(item, index) as Node
+            nodeMap.set(key, node)
+            container.appendChild(node)
         })
-
-        for (const [key, node] of nodeMap) {
-            if (!newKeys.has(key)) {
-                node.parentNode?.removeChild(node)
-                nodeMap.delete(key)
-            }
-        }
     }
 
     update()
@@ -68,6 +62,11 @@ export function If(
             if (currentNode) container.replaceChild(result as Node, currentNode)
             else container.appendChild(result as Node)
             currentNode = result as Node
+        } else {
+            if (currentNode) {
+                container.removeChild(currentNode)
+                currentNode = null
+            }
         }
     }
 
