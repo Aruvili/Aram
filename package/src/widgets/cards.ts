@@ -1,5 +1,6 @@
 import { createElement, type AramNode } from '../core/render'
 import { getTheme } from './theme'
+import { appendChildren } from '../utils/dom'
 
 export interface CardProps {
     title?: string

@@ -1,5 +1,6 @@
 import { createElement, type AramNode } from '../core/render'
 import { BADGE_SIZES } from '../utils/constants'
+import { injectStyles } from '../utils/styles'
 
 let spinnerStyleInjected = false
 let progressStyleInjected = false
@@ -25,10 +26,7 @@ export function Spinner(props: SpinnerProps = {}): HTMLElement {
     }
 
     if (!document.getElementById('aram-spinner-style')) {
-        const styleEl = document.createElement('style')
-        styleEl.id = 'aram-spinner-style'
-        styleEl.textContent = '@keyframes aram-spin { to { transform: rotate(360deg); } }'
-        document.head.appendChild(styleEl)
+        injectStyles('spinner', '@keyframes aram-spin { to { transform: rotate(360deg); } }')
     }
     return createElement('div', { style })
 }
@@ -49,15 +47,12 @@ export function Progress(props: ProgressProps): HTMLElement {
     const height = props.height || 8
 
     if (props.animated && !progressStyleInjected) {
-        const styleEl = document.createElement('style')
-        styleEl.id = 'aram-progress-style'
-        styleEl.textContent = `
+        injectStyles('progress', `
             @keyframes aram-progress-stripes {
                 from { background-position: 1rem 0; }
                 to { background-position: 0 0; }
             }
-        `
-        document.head.appendChild(styleEl)
+        `)
     }
 
     const container = createElement('div', {

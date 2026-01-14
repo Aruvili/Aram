@@ -2,6 +2,7 @@ import { createElement } from '../core/render'
 import { state } from '../core/state'
 import { getTheme } from './theme'
 import { registerCleanup } from '../core/lifecycle'
+import { injectStyles } from '../utils/styles'
 
 let accordionStyleInjected = false
 
@@ -123,12 +124,9 @@ export function Accordion(props: AccordionProps): HTMLElement {
     })
 
     if (!accordionStyleInjected) {
-        const style = document.createElement('style')
-        style.id = 'aram-accordion-style'
-        style.textContent = `
+        injectStyles('accordion', `
             @keyframes aram-accordion-open { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 500px; } }
-        `
-        document.head.appendChild(style)
+        `)
         accordionStyleInjected = true
     }
 

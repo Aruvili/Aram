@@ -1,6 +1,8 @@
 import { createElement } from '../core/render'
 import { getTheme } from './theme'
 import { registerCleanup } from '../core/lifecycle'
+import { injectStyles } from '../utils/styles'
+import { appendChildren } from '../utils/dom'
 
 let modalStyleInjected = false
 
@@ -59,12 +61,9 @@ export function Modal(props: ModalProps = {}, ...children: HTMLElement[]): HTMLE
         }
     })
     if (!modalStyleInjected) {
-        const style = document.createElement('style')
-        style.id = 'aram-modal-style'
-        style.textContent = `
+        injectStyles('modal', `
             @keyframes aram-modal-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        `
-        document.head.appendChild(style)
+        `)
         modalStyleInjected = true
     }
 
@@ -100,7 +99,7 @@ export function Modal(props: ModalProps = {}, ...children: HTMLElement[]): HTMLE
         }, props.description))
     }
 
-    children.forEach(child => modal.appendChild(child))
+    appendChildren(modal, children)
     overlay.appendChild(modal)
 
     return overlay
