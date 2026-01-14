@@ -3,14 +3,17 @@ import { applyCommonStyles } from '../utils/styles'
 import type { AramNode } from '../core/render'
 
 export interface BoxProps {
+    // Box model
     pad?: number | string
     padX?: number
     padY?: number
     margin?: number | string
 
+    // Colors
     bg?: string
     color?: string
 
+    // Size
     width?: number | string
     height?: number | string
     minWidth?: number | string
@@ -18,32 +21,50 @@ export interface BoxProps {
     maxWidth?: number | string
     maxHeight?: number | string
 
+    // Border
     radius?: number
     border?: string
+    borderTop?: string
+    borderBottom?: string
+    borderLeft?: string
+    borderRight?: string
 
+    // Flex
     gap?: number
     align?: 'start' | 'center' | 'end' | 'stretch'
+    items?: 'start' | 'center' | 'end' | 'stretch'  // alias for align
     justify?: 'start' | 'center' | 'end' | 'between' | 'around'
     wrap?: boolean
+    flex?: number | string
     grow?: boolean
+
+    // Other
+    overflow?: 'hidden' | 'auto' | 'scroll' | 'visible'
 }
 
 function createFlexContainer(direction?: 'row' | 'column') {
     return (props: BoxProps, ...children: AramNode[]): HTMLElement => {
         const el = createFlexBox(direction)
 
+        // Apply all styles using utilities
         applyCommonStyles(el, props)
 
+        // Additional flex styles
         if (props.gap !== undefined) el.style.gap = `${props.gap}px`
         if (props.wrap) el.style.flexWrap = 'wrap'
         if (props.grow) el.style.flexGrow = '1'
+        if (props.flex !== undefined) el.style.flex = typeof props.flex === 'number' ? String(props.flex) : props.flex
+        if (props.overflow) el.style.overflow = props.overflow
 
+        // Alignment - support both 'align' and 'items' (items is alias)
         const alignMap = { start: 'flex-start', center: 'center', end: 'flex-end', stretch: 'stretch' }
         const justifyMap = { start: 'flex-start', center: 'center', end: 'flex-end', between: 'space-between', around: 'space-around' }
 
-        if (props.align) el.style.alignItems = alignMap[props.align]
+        const alignValue = props.items || props.align
+        if (alignValue) el.style.alignItems = alignMap[alignValue]
         if (props.justify) el.style.justifyContent = justifyMap[props.justify]
 
+        // Append children
         appendChildren(el, children)
 
         return el
